@@ -68,11 +68,9 @@ vedaldi@robots.ox.ac.uk
 ## 3 方法
 
 设
-
 $$
 I \in \mathbb{R}^{3 \times H \times W}
 $$
-
 是一个RGB图像。我们的目标是学习一个神经网络 
 
 $$
