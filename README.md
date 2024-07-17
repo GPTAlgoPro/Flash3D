@@ -680,18 +680,92 @@ $$
 
 表1：跨域新视图合成。我们评估在未用于训练我们方法的数据集上的新视图合成（NVS）准确性。我们在KITTI特定基线上优于其他方法。这里，跨域（CD）表示该方法未在所评估的数据集上进行训练。
 
-<div style="text-align: center;">
-
-| 方法             | CD  | PSNR↑ | SSIM↑ | LPIPS↓ | CD  | PSNR↑ | SSIM↑ | LPIPS↓ |
-|-----------------|-----|-------|-------|--------|-----|-------|-------|--------|
-| LDI [76]        | ✗   | 16.50 | 0.572 | -      | -   | -     | -     | -      |
-| SV-MPI [74]     | ✗   | 19.50 | 0.733 | -      | -   | -     | -     | -      |
-| BTS [85]        | ✗   | 20.10 | 0.761 | 0.144  | -   | -     | -     | -      |
-| MINE [36]       | ✗   | 21.90 | 0.828 | 0.112  | ✓   | 24.33 | 0.745 | 0.202  |
-| UniDepth w/U    | ✓   | 20.86 | 0.774 | 0.154  | ✓   | 22.54 | 0.732 | 0.212  |
-| Flash3D (Ours)  | ✓   | 21.96 | 0.826 | 0.132  | ✓   | 25.45 | 0.774 | 0.196  |
-
+<div style="display: flex; justify-content: center;">
+  <table>
+    <thead>
+      <tr>
+        <th>方法</th>
+        <th>CD</th>
+        <th>PSNR↑</th>
+        <th>SSIM↑</th>
+        <th>LPIPS↓</th>
+        <th>CD</th>
+        <th>PSNR↑</th>
+        <th>SSIM↑</th>
+        <th>LPIPS↓</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>LDI [76]</td>
+        <td>✗</td>
+        <td>16.50</td>
+        <td>0.572</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>SV-MPI [74]</td>
+        <td>✗</td>
+        <td>19.50</td>
+        <td>0.733</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>BTS [85]</td>
+        <td>✗</td>
+        <td>20.10</td>
+        <td>0.761</td>
+        <td>0.144</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>MINE [36]</td>
+        <td>✗</td>
+        <td>21.90</td>
+        <td>0.828</td>
+        <td>0.112</td>
+        <td>✓</td>
+        <td>24.33</td>
+        <td>0.745</td>
+        <td>0.202</td>
+      </tr>
+      <tr>
+        <td>UniDepth w/U</td>
+        <td>✓</td>
+        <td>20.86</td>
+        <td>0.774</td>
+        <td>0.154</td>
+        <td>✓</td>
+        <td>22.54</td>
+        <td>0.732</td>
+        <td>0.212</td>
+      </tr>
+      <tr>
+        <td>Flash3D (Ours)</td>
+        <td>✓</td>
+        <td>21.96</td>
+        <td>0.826</td>
+        <td>0.132</td>
+        <td>✓</td>
+        <td>25.45</td>
+        <td>0.774</td>
+        <td>0.196</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
+
 
 
 训练和7,289次测试后，一旦Flash3D经过训练，我们评估其在各种数据集上的有效性，在每个部分中详细讨论。有关评估协议的详细信息，请参阅附录。
