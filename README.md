@@ -2,7 +2,7 @@
 Stanislaw Szymanowicz*, Eldar Insafutdinov*, Chuanxia Zheng*, Dylan Campbell, João Henriques, Christian Rupprecht, Andrea Vedaldi
 - Visual Geometry Group - University of Oxford
 
-# 摘要
+## 摘要
 
 本文提出了一种名为Flash3D的方法，用于从单张图像进行3D场景重建和新视角合成。该方法既具有很高的泛化性，又非常高效。
 
