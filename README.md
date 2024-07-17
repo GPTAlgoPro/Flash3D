@@ -47,7 +47,9 @@ vedaldi@robots.ox.ac.uk
 总体而言，Flash3D是一个简单且高性能的单目场景重建管道。经验表明，我们发现Flash3D可以(a)渲染高质量的重建3D场景图像；(b)在广泛的场景中操作，包括室内和室外；并且(c)重建被遮挡部分，这在仅深度估计或简单的扩展中是不可能实现的。Flash3D在所有指标上在RealEstate10K\[72\]上实现了最先进的新视图合成精度。
 更为显著的是，相同的冻结模型在转移到NYU\[61\]和KITTI\[18\]时也能达到最先进的精度（在PSNR上）。此外，在外推设置中，我们的重建甚至比使用两张场景图像而非一张的双目方法（如pixelSplat\[9\]和latentSplat\[83\]）更准确，因此具有显著的优势。
 
-<img width="639" alt="image" src="https://github.com/user-attachments/assets/de7a0749-07ec-4312-9f40-2cbdeff5cb92">
+<p align="center">
+  <img width="639" alt="image" src="https://github.com/user-attachments/assets/de7a0749-07ec-4312-9f40-2cbdeff5cb92">
+</p>
 
 除了重建的质量，如图1所示，Flash3D在评估和，尤其是训练方面非常高效。例如，我们使用的是MINE\[36\]的GPU资源的1/64。通过使用较少的计算资源实现最先进的结果，这为更广泛的研究人员打开了研究领域的大门。
 
