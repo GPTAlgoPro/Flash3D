@@ -1,16 +1,39 @@
-# Flash3D: Feed-Forward Generalisable 3D Scene Reconstruction from a Single Image
-Stanislaw Szymanowicz*, Eldar Insafutdinov*, Chuanxia Zheng*, Dylan Campbell, João Henriques, Christian Rupprecht, Andrea Vedaldi
-- Visual Geometry Group - University of Oxford
+# Flash3D: 单张图像的前馈式通用3D场景重建
+
+## Stanislaw Szymanowicz\*
+VGG, 牛津大学  
+stan@robots.ox.ac.uk
+
+## Eldar Insafutdinov\*
+VGG, 牛津大学  
+eldar@robots.ox.ac.uk
+
+## Chuanxia Zheng\*
+VGG, 牛津大学  
+cxzheng@robots.ox.ac.uk
+
+## Dylan Campbell
+澳大利亚国立大学  
+dylan.campbell@anu.edu.au
+
+## João F. Henriques
+VGG, 牛津大学  
+joao@robots.ox.ac.uk
+
+## Christian Rupprecht
+VGG, 牛津大学  
+chrisr@robots.ox.ac.uk
+
+## Andrea Vedaldi
+VGG, 牛津大学  
+vedaldi@robots.ox.ac.uk
 
 ## 摘要
+在本文中，我们提出了Flash3D，这是一种场景重建和新视图合成的方法，只需要单张图像，且具备很强的通用性和高效性。为了通用性，我们从单目深度估计的“基础”模型开始，并将其扩展为完整的3D形状和外观重建器。为了高效性，我们基于前馈高斯散射进行扩展。具体来说，我们首先在预测深度处预测3D高斯分布，然后添加偏移的高斯分布层，允许模型在遮挡和截断之间完成重建。Flash3D非常高效，在单个GPU上一天内即可训练完毕，因此大多数研究人员都能使用它。它在训练并在RealEstate10k上测试时取得了最先进的结果。当转移到未见过的数据集NYU时，它以很大优势超越了竞争对手。更为显著的是，当转移到KITTI时，Flash3D在PSNR上超过了专门针对该数据集训练的方法。在某些情况下，它甚至超越了使用多视图输入的最新方法。代码、模型、演示和更多结果可在[此处](https://www.robots.ox.ac.uk/~vgg/research/flash3d/)获得。
 
-本文提出了一种名为Flash3D的方法，用于从单张图像进行3D场景重建和新视角合成。该方法既具有很高的泛化性，又非常高效。
+## 1 介绍
+我们考虑通过网络的一次前馈传递从单张图像重建真实感3D场景的问题。这是一个具有挑战性的任务，因为场景复杂且单目重建是不适定的。单目设置中缺乏明确的几何线索，如三角测量，并且无法直接获得被遮挡部分的视图。
 
-在泛化性方面，我们从单目深度估计的“基础”模型出发，将其扩展为一个完整的3D形状和外观重建器。在效率方面，我们基于前馈高斯点积来进行扩展。具体来说，我们在预测的深度处预测第一层3D高斯，然后在空间中偏移添加额外的高斯层，从而使模型能够在遮挡和截断后完成重建。
+该问题与单目深度估计密切相关\[4, 6, 7, 16, 20, 33, 34, 46, 47, 56, 59, 90\]，这是一项成熟的技术。现在可以通过出色的跨域泛化\[47, 90, 91\]准确估计度量深度。然而，尽管深度估计器可以预测最近可见表面的3D形状，但它们并不提供任何外观信息，或者被遮挡或视野外部分的估计。仅深度不足以解决诸如新视图合成（NVS）等任务，这些任务还需要解决局部和视图依赖的外观。
 
-Flash3D非常高效，可以在单个GPU上在一天内完成训练，因此大多数研究人员都可以使用。
-
-在RealEstate10k数据集上进行训练和测试时，Flash3D达到了最先进的结果。当迁移到NYU等未见过的数据集时，它以较大优势超过了竞争对手。更令人印象深刻的是，当迁移到KITTI时，Flash3D在PSNR上比专门在该数据集上训练的方法表现更好。在某些情况下，它甚至超过了使用多视图输入的最新方法。
-
-
-
+尽管现代单目场景重建方法存在\[36, 74, 85\]，但它们大多在封闭环境中操作，即为每个特定数据集训练单独的网络。与之相反，现代的
