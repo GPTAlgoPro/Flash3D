@@ -63,18 +63,3 @@ vedaldi@robots.ox.ac.uk
 ### 单目深度预测
 我们的方法基于单目深度估计\[4, 6, 7, 15, 16, 20, 21, 33, 34, 46, 50, 56, 59, 90, 98\]，这些方法预测每个像素的度量或相对深度。通过从大数据集的图像中学习深度，有些方法展示了高精度和跨域泛化的能力。虽然我们的方法与深度预测器紧密结合，但我们使用一种最先进的度量深度估计器UniDepth\[47\]进行实验。
 
-<!DOCTYPE html>
-<html>
-<head>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-</head>
-<body>
-  这是一个内联公式示例：\( E = mc^2 \)
-  <br>
-  这是一个块级公式示例：
-  \[
-  \left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
-  \]
-</body>
-</html>
