@@ -63,18 +63,69 @@ vedaldi@robots.ox.ac.uk
 ### 单目深度预测
 我们的方法基于单目深度估计\[4, 6, 7, 15, 16, 20, 21, 33, 34, 46, 50, 56, 59, 90, 98\]，这些方法预测每个像素的度量或相对深度。通过从大数据集的图像中学习深度，有些方法展示了高精度和跨域泛化的能力。虽然我们的方法与深度预测器紧密结合，但我们使用一种最先进的度量深度估计器UniDepth\[47\]进行实验。
 
-如图2所示，Flash3D的概述。给定单张图像 `\( I \)` 作为输入，Flash3D首先使用冻结的现成网络\[47\]估计度量深度 `\( D \)`。然后，类似ResNet50的编码-解码网络预测每个像素 `\( u \)` 的 `\( K \)` 层高斯的形状和外观参数集合 `\( \mathcal{P} \)`，允许建模未观察到和被遮挡的表面。从这些预测的成分中，可以通过将预测的（正）偏移 `\( \delta_i \)` 与预测的单目深度 `\( D \)` 相加来获得每层高斯的均值向量。这种策略确保各层深度有序，鼓励网络建模被遮挡的表面。
+如图2所示，Flash3D的概述。给定单张图像 <code>I</code> 作为输入，Flash3D首先使用冻结的现成网络\[47\]估计度量深度 <code>D</code>。然后，类似ResNet50的编码-解码网络预测每个像素 <code>u</code> 的 <code>K</code> 层高斯的形状和外观参数集合 <code>\mathcal{P}</code>，允许建模未观察到和被遮挡的表面。从这些预测的成分中，可以通过将预测的（正）偏移 <code>\delta_i</code> 与预测的单目深度 <code>D</code> 相加来获得每层高斯的均值向量。这种策略确保各层深度有序，鼓励网络建模被遮挡的表面。
 
 ## 3 方法
 
-设 `\( I \in \mathbb{R}^{3 \times H \times W} \)` 是一个RGB图像。我们的目标是学习一个神经网络 `\( \Phi \)`，它将 `\( I \)` 作为输入并预测场景的3D内容表示 `\( G = \Phi(I) \)`，包括3D几何和光度。我们首先在第3.1节讨论背景和基线模型，然后在第3.2节介绍我们分层多高斯预测器，并在第3.2节讨论使用单目深度预测作为先验。
+设 <code>I \in \mathbb{R}^{3 \times H \times W}</code> 是一个RGB图像。我们的目标是学习一个神经网络 <code>\Phi</code>，它将 <code>I</code> 作为输入并预测场景的3D内容表示 <code>G = \Phi(I)</code>，包括3D几何和光度。我们首先在第3.1节讨论背景和基线模型，然后在第3.2节介绍我们分层多高斯预测器，并在第3.2节讨论使用单目深度预测作为先验。
 
 ### 3.1 背景：从单张图像重建场景
 
 #### 表示：作为3D高斯集合的场景
-场景表示 `\( G = \{(\sigma_i, \mu_i, \Sigma_i, c_i)\}_{i=1}^G \)` 是一组3D高斯\[31\]，其中 `\( \sigma_i \in [0, 1] \)` 是不透明度，`\( \mu_i \in \mathbb{R}^3 \)` 是均值，`\( \Sigma_i \in \mathbb{R}^{3 \times 3} \)` 是协方差矩阵，`\( c_i : S^2 \rightarrow \mathbb{R}^3 \)` 是每个成分的方向颜色。设
+场景表示 <code>G = \{(\sigma_i, \mu_i, \Sigma_i, c_i)\}_{i=1}^G</code> 是一组3D高斯\[31\]，其中 <code>\sigma_i \in [0, 1]</code> 是不透明度，<code>\mu_i \in \mathbb{R}^3</code> 是均值，<code>\Sigma_i \in \mathbb{R}^{3 \times 3}</code> 是协方差矩阵，<code>c_i : S^2 \rightarrow \mathbb{R}^3</code> 是每个成分的方向颜色。设
 
-```latex
-g_i(x) = \exp \left( -\frac{1}{2} (x - \mu_i)^\top \Sigma_i^{-1} (x - \mu_i) \right)
+<div>
+  \( g_i(x) = \exp \left( -\frac{1}{2} (x - \mu_i)^\top \Sigma_i^{-1} (x - \mu_i) \right) \)
+</div>
+
+为对应的（非归一化）高斯函数。高斯的颜色通常用球谐函数表示，所以
+
+<div>
+  \( [c_i(\nu)]_j = \sum_{l=0}^{L-1} \sum_{m=-l}^l c_{ijlm} Y_{lm}(\nu) \)
+</div>
+
+其中 <code>\nu \in S^2</code> 是一个方向，<code>Y_{lm}</code> 是各种顺序和次数的球谐函数。高斯混合
+
+<div>
+  \( \sigma(x) = \frac{\sum_{i=1}^G \sigma_i g_i(x)}{\sum_{i=1}^G \sigma_i g_i(x)} \)
+</div>
+
+线性组合颜色和辐射场的颜色函数：
+
+<div>
+  \( c(x, \nu) = \frac{\sum_{i=1}^G \sigma_i g_i(x) c_i(\nu)}{\sum_{i=1}^G \sigma_i g_i(x)} \)
+</div>
+
+其中 <code>\sigma(x)</code> 是 <code>\mathbb{R}^3</code> 中位置 <code>x</code> 的3D不透明度， <code>c(x, \nu)</code> 是朝向相机方向 <code>\nu</code> 的 <code>x</code> 处的辐射。
+
+通过使用辐射-吸收方程\[39\]积分辐射来渲染图像 <code>J(u)</code>，即
+
+<div>
+  \( J(u) = \int_0^\infty \sigma(x_t, \nu) c(x_t, \nu) \exp \left( - \int_0^t \sigma(x_\tau) d\tau \right) dt \)
+</div>
+
+其中 <code>x_t = x_0 - t \nu</code> 是从相机中心 <code>x_0</code> 出发沿像素 <code>u</code> 的方向传播的光线。高斯散射\[31\]的关键贡献是非常有效地近似此积分，实施可微分渲染函数 <code>\hat{J} = \text{Rend}(G, \pi)</code>，将高斯混合 <code>G</code> 和视点 <code>\pi</code> 作为输入并返回相应图像的估计 <code>\hat{J}</code>。
+
+#### 单目重建
+根据\[68\]，神经网络的输出 <code>\Phi(I) \in \mathbb{R}^{C \times H \times W}</code> 是一个张量，指定每个像素 <code>u = (u_x, u_y, 1)</code> 的彩色高斯参数，包括不透明度 <code>\sigma</code>，深度 <code>d \in \mathbb{R}_+</code>，偏移 <code>\Delta \in \mathbb{R}^3</code>，协方差 <code>\Sigma \in \mathbb{R}^{3 \times 3}</code> 表示旋转和缩放（使用四元数表示旋转），以及颜色模型 <code>c \in \mathbb{R}^{3(L+1)^2}</code>，其中 <code>L</code> 是球谐函数的顺序。高斯的均值为
+
+<div>
+  \( \mu = K^{-1} u d + \Delta \)
+</div>
+
+其中 <code>K = \text{diag}(f, f, 1) \in \mathbb{R}^{3 \times 3}</code> 是相机校准矩阵， <code>f</code> 是焦距。因此，每个像素预测
+
+<div>
+  \( C = 1 + 1 + 3 + 7 + 3(L+1)^2 = 12 + 3(L+1)^2 \)
+</div>
+
+参数。模型 <code>\Phi</code> 使用三元组 <code>(J, I, \pi)</code> 进行训练，其中 <code>I</code> 是目标图像， <code>J</code> 是目标图像， <code>\pi</code> 是相对相机姿态。为了学习网络参数，只需最小化渲染损失
+
+<div>
+  \( L(G, \pi, J) = ||\text{Rend}(G, \pi) - J|| \)
+</div>
+
+### 3.2 单目前馈多高斯
+为了通用性，我们建议在高质量的预训练模型上构建Flash3D，该模型在大量数据上训练。特别是，鉴于单目场景重建和单目深度估计之间的相似性，我们使用一个现成的单目深度预测器 <code>\Psi</code>。
 
 
