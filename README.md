@@ -94,17 +94,13 @@ $$
 
 
 $$
-
 场景表示 \( G = \{(\sigma_i, \mu_i, \Sigma_i, c_i)\}_{i=1}^G \) 是一组3D高斯\[31\]，其中 \( \sigma_i \in [0, 1] \) 是不透明度，\( \mu_i \in \mathbb{R}^3 \) 是均值， \( \Sigma_i \in \mathbb{R}^{3 \times 3} \) 是协方差矩阵，\( c_i : S^2 \rightarrow \mathbb{R}^3 \) 是每个成分的方向颜色。设 \( g_i(x) = \exp \left( -\frac{1}{2} (x - \mu_i)^\top \Sigma_i^{-1} (x - \mu_i) \right) \) 为对应的（非归一化）高斯函数。高斯的颜色通常用球谐函数表示，所以 \( [c_i(\nu)]_j = \sum_{l=0}^{L-1} \sum_{m=-l}^l c_{ijlm} Y_{lm}(\nu) \)，其中 \( \nu \in S^2 \) 是一个方向，\( Y_{lm} \) 是各种顺序和次数的球谐函数。高斯混合 \( \sigma(x) = \sum_{i=1}^G \sigma_i g_i(x) / \sum_{i=1}^G \sigma_i g_i(x) \) 线性组合颜色和辐射场的颜色函数：\( c(x, \nu) = \sum_{i=1}^G \sigma_i g_i(x) c_i(\nu) / \sum_{i=1}^G \sigma_i g_i(x) \)，其中 \( \sigma(x) \) 是 \( \mathbb{R}^3 \) 中位置 \( x \) 的3D不透明度， \( c(x, \nu) \) 是朝向相机方向 \( \nu \) 的 \( x \) 处的辐射。
-
 $$
-
 
 
 $$
 通过使用辐射-吸收方程\[39\]积分辐射来渲染图像 \( J(u) \)，即 \( J(u) = \int_0^\infty \sigma(x_t, \nu) c(x_t, \nu) \exp \left( - \int_0^t \sigma(x_\tau) d\tau \right) dt \)，其中 \( x_t = x_0 - t \nu \) 是从相机中心 \( x_0 \) 出发沿像素 \( u \) 的方向传播的光线。高斯散射\[31\]的关键贡献是非常有效地近似此积分，实施可微分渲染函数 \( \hat{J} = \text{Rend}(G, \pi) \)，将高斯混合 \( G \) 和视点 \( \pi \) 作为输入并返回相应图像的估计 \( \hat{J} \)。
 $$
-
 
 
 ### 单目重建
